@@ -200,6 +200,7 @@ Trigger conditions must satisfy both:
 - When base general skill updates, check all language-specific files for sync needs
 - Language-specific files must not contradict general skill
 - If language-specific content too thin (<3 unique rules), language has no specialization need, don't force create
+- When the template structure changes, audit existing language-specific files and backfill the new structure
 
 ---
 

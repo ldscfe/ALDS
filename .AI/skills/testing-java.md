@@ -3,13 +3,15 @@ title: Testing Java
 doc_type: skill
 status: active
 scope: ALDS
-updated: 2026-05-07
+updated: 2026-08-24
 summary: Java-specific testing guidance for common JVM testing patterns, mocking, and framework-aligned verification.
+based_on: "skills/testing.md"
+languages: ["java"]
 ---
 
-# Java Testing Skill
+# Testing - Java Specialization
 
-This skill is a Java specialization of `testing.md`, for test design and implementation recommendations in the JVM ecosystem.
+> This skill is a Java specialization of `skills/testing.md`, for test design and implementation recommendations in the JVM ecosystem.
 
 ## 1. Applicability
 
@@ -21,14 +23,14 @@ This skill is a Java specialization of `testing.md`, for test design and impleme
 
 ## 2. Trigger Conditions
 
-Load in addition to `testing.md` when:
+Load in addition to `skills/testing.md` when:
 
 - `languages` in `.AI/project/project.yaml` contains `java`
 - Or the current task is explicitly bound to a Java / JVM testing implementation
 
 ## 3. Output Constraints
 
-Inheriting `testing.md`, may additionally include:
+Inheriting `skills/testing.md`, may additionally include:
 
 1. Test framework selection recommendations
 2. Java test class structure recommendations

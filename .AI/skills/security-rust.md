@@ -3,13 +3,15 @@ title: Security Rust
 doc_type: skill
 status: active
 scope: ALDS
-updated: 2026-05-07
+updated: 2026-08-24
 summary: Rust-specific security guidance for unsafe usage, handler boundaries, auth flow isolation, and web-layer defenses.
+based_on: "skills/security.md"
+languages: ["rust"]
 ---
 
-# Rust Security Skill
+# Security - Rust Specialization
 
-This skill is a Rust specialization of `security.md`, for handler boundaries, unsafe usage, and common web defense checks in Rust services.
+> This skill is a Rust specialization of `skills/security.md`, for handler boundaries, unsafe usage, and common web defense checks in Rust services.
 
 ## 1. Applicability
 
@@ -21,14 +23,14 @@ This skill is a Rust specialization of `security.md`, for handler boundaries, un
 
 ## 2. Trigger Conditions
 
-Load in addition to `security.md` when:
+Load in addition to `skills/security.md` when:
 
 - `languages` in `.AI/project/project.yaml` contains `rust`
 - Or the current task is explicitly bound to a Rust security implementation
 
 ## 3. Output Constraints
 
-Inheriting `security.md`, may additionally include:
+Inheriting `skills/security.md`, may additionally include:
 
 1. Boundary risks in handlers or parsers
 2. Auth or connection management recommendations

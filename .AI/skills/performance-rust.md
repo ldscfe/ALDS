@@ -3,13 +3,15 @@ title: Performance Rust
 doc_type: skill
 status: active
 scope: ALDS
-updated: 2026-05-07
+updated: 2026-08-24
 summary: Rust-specific performance guidance for async execution, lock contention, pooling, and template or service-layer hotspots.
+based_on: "skills/performance.md"
+languages: ["rust"]
 ---
 
-# Rust Performance Skill
+# Performance - Rust Specialization
 
-This skill is a Rust specialization of `performance.md`, for async, concurrency, and service layer performance analysis in Rust projects.
+> This skill is a Rust specialization of `skills/performance.md`, for async, concurrency, and service layer performance analysis in Rust projects.
 
 ## 1. Applicability
 
@@ -21,14 +23,14 @@ This skill is a Rust specialization of `performance.md`, for async, concurrency,
 
 ## 2. Trigger Conditions
 
-Load in addition to `performance.md` when:
+Load in addition to `skills/performance.md` when:
 
 - `languages` in `.AI/project/project.yaml` contains `rust`
 - Or the current task is explicitly bound to Rust performance work
 
 ## 3. Output Constraints
 
-Inheriting `performance.md`, may additionally include:
+Inheriting `skills/performance.md`, may additionally include:
 
 1. Async execution path analysis
 2. Concurrency and lock usage recommendations

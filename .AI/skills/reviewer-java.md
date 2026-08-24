@@ -25,7 +25,7 @@ languages: ["java"]
 
 Load in addition to `skills/reviewer.md` when:
 
-- `active_language` is `java`
+- `languages` in `.AI/project/project.yaml` contains `java`
 - Or the current task is explicitly bound to a Java code review
 
 ## 3. Output Constraints
