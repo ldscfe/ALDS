@@ -1,0 +1,62 @@
+schema_version: 1.0.0
+
+document:
+  type: project-definition
+  status: draft
+  updated: "{YYYY-MM-DD}"
+
+project:
+  id: "{project_id}"
+  name: "{project_name}"
+  status: draft
+  languages: []
+  summary: >-
+    {project_summary}
+  goals: []
+  current_scope: []
+  key_modules: []
+  constraints: []
+  ui_framework: ""
+  frontend_testing: ""
+
+governance:
+  standards:
+    - ALDS
+
+  governance_mode: full
+
+  invariant_policy: strict
+
+  guard_policy: fail-fast
+
+  source_of_truth:
+    project_definition: .AI/project/project.yaml
+    source_materials: .AI/source/
+
+initialization:
+  allow_source_material_inference: true
+
+  filename_inference:
+    enabled: true
+    patterns:
+      - "{Project}_design_vx.x.x.md"
+      - "{Project}_{kind}_vx.x.x.md"
+
+  source_priority:
+    - source_material_explicit_facts
+    - requirements_document_facts
+    - design_document_facts
+    - reference_material_facts
+    - filename_inference
+    - user_initialization_input
+
+directories:
+  source_requirements: .AI/source/requirements/
+  source_design: .AI/source/design/
+  source_references: .AI/source/references/
+  architecture: .AI/project/architecture/
+  specs: .AI/project/specs/
+  invariants: .AI/project/invariants/
+  guards: .AI/project/guards/
+  process: .AI/project/process/
+  roadmap: .AI/project/roadmap/
