@@ -3,8 +3,8 @@ title: ALDS Controlled Enumerations
 doc_type: standard
 status: active
 scope: ALDS
-updated: 2026-08-02
-version: 1.2.1
+updated: 2026-09-04
+version: 1.2.2
 ---
 
 # Controlled Enumerations
@@ -90,7 +90,7 @@ Applicable to:
 
 ### 6.1 Risk Quantification Criteria
 
-Risk level determines task path (simple/engineering), verification coverage level, and upgrade approvals. Must judge per following objective criteria, not by subjective impression alone. Multiple tiers hit take highest; Agent self-assessment conflicts with objective criteria take higher tier and record reason.
+Risk level determines task path (micro/simple/engineering), verification coverage level, and upgrade approvals. Must judge per following objective criteria, not by subjective impression alone. Multiple tiers hit take highest; Agent self-assessment conflicts with objective criteria take higher tier and record reason.
 
 | Level | Auto-Trigger Conditions (any hit = not below this tier) |
 | :--- | :--- |
@@ -100,7 +100,7 @@ Risk level determines task path (simple/engineering), verification coverage leve
 | `low` | Purely isolated, single-point, with sufficient automated test coverage changes |
 | `unknown` | Insufficient info to apply any above, must supplement basis before continuing |
 
-> `critical` and `high` tasks must not take simple task path (simple task requires risk ≤ `medium`, see `start.md` §6.1).
+> `critical`, `high`, and `medium` tasks must not take micro task path (micro task requires risk = `low`); `critical` and `high` tasks must not take simple task path (simple task requires risk ≤ `medium`). See `start.md` §6.1.
 
 ## 7. Effort Estimation
 
@@ -165,7 +165,7 @@ Architecture review, spec review, etc. review process final conclusions use foll
 | :--- | :--- |
 | `full` | Full ALDS governance (default). Complete approval gates, independent task brief and work order, complete status sync, full-dimensional verification matrix. |
 
-> `minimal` mode removed. Task weight no longer determined by project-level `governance_mode`, but by `start.md` §6.1 task path judgment (simple task/engineering task), see §13.
+> `minimal` mode removed. Task weight no longer determined by project-level `governance_mode`, but by `start.md` §6.1 task path judgment (micro task/simple task/engineering task), see §13.
 
 ## 13. Task Eligibility Results
 
@@ -173,15 +173,16 @@ Task-level eligibility review uses following enumerations, per `.AI/start.md` §
 
 | Recorded Value | Meaning |
 | :--- | :--- |
+| `micro` | Task satisfies all micro task conditions (see `start.md` §6.1), takes micro task path (no work order, direct execution + `micro_tasks.md` line) |
 | `simple` | Task satisfies all simple task conditions (see `start.md` §6.1), takes simple task path (single work order) |
 | `full` | Task does not satisfy simple task conditions, takes engineering task path (task brief + work order) |
-| `upgrade_triggered` | Simple task execution actually exceeds boundaries (multi work orders/risk escalation/touches invariants/guards/new dependencies), upgrades to engineering task |
+| `upgrade_triggered` | Micro or simple task execution actually exceeds boundaries (micro: multi-point change/risk > `low`/touches invariants/guards/new dependencies/net change > `50` lines or > `3` files; simple: multi work orders/risk escalation/touches invariants/guards/new dependencies), upgrades to simple or engineering task |
 
-> Eligibility review only decides "whether task brief needed", does not change workflow routing, required documents table, or skill matching.
+> Eligibility review only decides "which control document tier applies", does not change workflow routing, required documents table, or skill matching.
 
 ## 14. State Machine Diagrams
 
-Following state machines visualize legal transitions for each enum; authoritative definitions remain §2, §3, §8 text.
+Following state machines visualize legal transitions for each enum; authoritative definitions remain §2, §3, §8, §15 text.
 
 ### 14.1 Document Status (§2)
 
@@ -234,3 +235,29 @@ stateDiagram-v2
     done --> [*]
     dismissed --> [*]
 ```
+
+### 14.4 Micro Task Verification Status (§15)
+
+```mermaid
+stateDiagram-v2
+    [*] --> unverified
+    unverified --> verified: user test / centralized test passed (evidence recorded)
+    unverified --> failed: test found problem
+    unverified --> upgraded: boundary exceeded during execution
+    verified --> [*]
+    failed --> [*]
+    upgraded --> [*]
+```
+
+## 15. Micro Task Verification Status
+
+Micro task ledger (`reports/micro_tasks.md`) status column uses following enumerations, per `.AI/start.md` §6.2 and `alds_standards.md` §21.1.
+
+| Recorded Value | Meaning |
+| :--- | :--- |
+| `unverified` | Executed, awaiting user test or centralized test |
+| `verified` | User test or centralized test passed, evidence recorded |
+| `failed` | Test found problem, enters fix flow |
+| `upgraded` | Execution exceeded micro task boundary, upgraded to simple/engineering task |
+
+> Must not set `verified` without user test or centralized test evidence. Fix of a `failed` row is a new task, re-judged per `start.md` §6.1.

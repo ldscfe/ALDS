@@ -29,7 +29,7 @@ This directory stores executable ALDS workflows.
 | Architecture, specs, process, governance updates | `architecture_evolution.md` | Evolution flow |
 | Existing processes insufficient | `create_workflow.md` | Controlled extension |
 
-> **Task Path Note**: All workflows routed per this index, then at execution §flow per `.AI/start.md` §6.1 judge task path (simple task/engineering task). Simple tasks directly generate single work order (frontend includes layout diagram), engineering tasks generate task brief + work order(s). Task path does not change workflow routing, only decides whether task brief needed.
+> **Task Path Note**: All workflows routed per this index, then at execution §flow per `.AI/start.md` §6.1 judge task path (micro task/simple task/engineering task). Micro tasks execute directly without work order (add line to `reports/micro_tasks.md`, verification deferred), simple tasks directly generate single work order (frontend includes layout diagram), engineering tasks generate task brief + work order(s). Task path does not change workflow routing, only decides which control document tier applies.
 
 ## Fallback Specification
 

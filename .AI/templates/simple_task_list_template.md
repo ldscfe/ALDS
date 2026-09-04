@@ -8,7 +8,7 @@ updated: 2026-08-10
 
 # Simple Task List
 
-Line-by-line ledger of completed simple tasks. Each simple task occupies **one row**, newest on top (new entries inserted at first row below header, fixed insert position). Spec in `.AI/standards/alds_standards.md` §16, `.AI/start.md` §6.2 and §10.
+Line-by-line ledger of completed simple tasks. Each simple task occupies **one row**, newest on top (new entries inserted at first row below header, fixed insert position). Spec in `.AI/standards/alds_standards.md` §16, `.AI/start.md` §6.3 and §10.
 
 Simple tasks not recorded in project pulse; this list is their only ledger.
 

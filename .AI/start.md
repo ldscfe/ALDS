@@ -3,14 +3,14 @@ title: ALDS Standard Task Flow
 doc_type: start
 status: active
 scope: ALDS
-updated: 2026-08-10
+updated: 2026-09-04
 ---
 
 # Standard Task Flow
 
 `.AI/start.md` is the main flow for standard tasks. Project initialization does not execute here; must route to `.AI/project/init.md`.
 
-ALDS artifacts have two tiers: **Simple Tasks** (single work order + add one line to `reports/simple_tasks.md` after completion) and **Engineering Tasks** (task brief + work order(s)). Judgment in §6.1.
+ALDS artifacts have three tiers: **Micro Tasks** (one-sentence requirements: no work order, direct execution + one line in `reports/micro_tasks.md`, verification deferred), **Simple Tasks** (single work order + add one line to `reports/simple_tasks.md` after completion), and **Engineering Tasks** (task brief + work order(s)). Judgment in §6.1.
 
 ## 1. Entry Conditions
 
@@ -26,8 +26,9 @@ If user goal is to initialize `.AI/project/` baseline, stop this flow, route to 
 
 ## 2. Flow Overview
 
-`Project Definition -> Intent Routing -> Minimum Context -> Task Path Judgment -> { Simple Task | Engineering Task } -> Execution -> Verification(default test) -> Archive -> Git Commit`
+`Project Definition -> Intent Routing -> Minimum Context -> Task Path Judgment -> { Micro Task | Simple Task | Engineering Task } -> Execution -> Verification -> Archive -> Git Commit`
 
+- **Micro Task**: `... -> Direct Execution (no work order) -> micro_tasks.md add line (unverified) -> Git Commit` (verification deferred to user test or centralized test, §9)
 - **Simple Task**: `... -> Single Work Order -> User Instruction Execution -> Default Test -> simple_tasks.md add line -> Archive Work Order`
 - **Engineering Task**: `... -> Task Brief -> Approval -> Work Order(s) -> Approval -> Execution -> Test Gate -> Archive + Pulse Sync`
 
@@ -41,9 +42,11 @@ flowchart TD
   C --> D["Intent Routing §3 → Selected Workflow"]
   D --> E["Minimum Read Set: Required Table + Profile Evaluation + Negative List"]
   E --> F{Task Path §6.1}
-  F -- "Simple Task §6.2" --> G1["Single Work Order (Frontend includes Layout Diagram) → Execution → Default Test → simple_tasks.md add line"]
-  F -- "Engineering Task §6.3" --> G2["Task Brief → Work Order(s) → Execution → Test Gate → Archive+Pulse Sync"]
-  G1 --> K["git commit"]
+  F -- "Micro Task §6.2" --> G0["Direct Execution (no work order) → micro_tasks.md add line (unverified) → Deferred Verification"]
+  F -- "Simple Task §6.3" --> G1["Single Work Order (Frontend includes Layout Diagram) → Execution → Default Test → simple_tasks.md add line"]
+  F -- "Engineering Task §6.4" --> G2["Task Brief → Work Order(s) → Execution → Test Gate → Archive+Pulse Sync"]
+  G0 --> K["git commit"]
+  G1 --> K
   G2 --> K
 ```
 
@@ -104,11 +107,21 @@ After selecting workflow, read in order. Each workflow's "required documents" ta
 
 ## 6. Task Path and Task Brief Stage
 
-After selecting workflow and determining task profile, first judge per §6.1 whether simple task path (§6.2) or engineering task path (§6.3).
+After selecting workflow and determining task profile, first judge per §6.1 whether micro task path (§6.2), simple task path (§6.3), or engineering task path (§6.4).
 
 ### 6.1 Task Path Judgment
 
-All conditions below simultaneously satisfied = **Simple Task**, go §6.2; any not satisfied = §6.3 Engineering Task path:
+Judge in order: micro task first, then simple task, otherwise engineering task.
+
+All conditions below simultaneously satisfied = **Micro Task**, go §6.2:
+
+- One-sentence user instruction expressing a directly executable single-point change
+- Risk = `low`, does not touch `.AI/project/invariants/` or `.AI/project/guards/`
+- No new modules or external dependencies
+- Not part of existing engineering task (no existing task brief or milestone affiliation)
+- Net change ≤ `50` lines and ≤ `3` files (estimated; actual exceeds = upgrade per §6.2)
+
+All conditions below simultaneously satisfied = **Simple Task**, go §6.3; any not satisfied = §6.4 Engineering Task path:
 
 - Not part of existing large engineering task (no existing task brief or milestone affiliation)
 - Directly generated from user instruction (small optimization, fix, single-point change, doc tweak, etc.)
@@ -116,9 +129,22 @@ All conditions below simultaneously satisfied = **Simple Task**, go §6.2; any n
 - Risk ≤ `medium`, does not touch `.AI/project/invariants/` or `.AI/project/guards/`
 - No new modules or external dependencies
 
-> Path judgment only decides "whether task brief needed", does not change workflow routing, required documents table, or skill matching.
+> Path judgment only decides "which control document tier applies (none / single work order / task brief + work orders)", does not change workflow routing, required documents table, or skill matching.
 
-### 6.2 Simple Task Path
+### 6.2 Micro Task Path
+
+Micro tasks (one-sentence requirements) generate no task brief and no work order; user instruction itself is execution authorization:
+
+1. Judge per §6.1; ambiguity blocking execution must be clarified conversationally first (not a formal approval node)
+2. Directly execute per selected workflow and minimum context; execution discipline unchanged (no silent scope expansion, error handling per §11)
+3. If execution actually exceeds micro task boundary (multi-point change, risk > `low`, touches invariants/guards, new dependencies, net change > `50` lines or > `3` files), pause and upgrade: backfill single work order (simple task, §6.3) or task brief (engineering task, §6.4), ledger row status set `upgraded`
+4. After completion add line at first row below header in `reports/micro_tasks.md` (newest on top), status `unverified`; columns per `.AI/templates/micro_task_list_template.md`
+5. Verification not executed per task: deferred to user test or centralized test (both user-triggered, §9); closure updates status and evidence, no evidence = no `verified`
+6. Git commit per task (§10)
+
+Micro tasks not recorded in project pulse, no task brief or work order generated; only ledger record is `reports/micro_tasks.md` one line (session log §12 still records the instruction).
+
+### 6.3 Simple Task Path
 
 Simple tasks do not generate task brief, directly generate work order:
 
@@ -131,7 +157,7 @@ Simple tasks do not generate task brief, directly generate work order:
 
 Simple tasks not recorded in project pulse, no task brief generated; only ledger record is `reports/simple_tasks.md` one line. If execution actually exceeds simple task boundary (needs multiple work orders, risk escalation, touches invariants/guards, new dependencies), upgrade to engineering task: supplement task brief, completed work orders backfill as execution results.
 
-### 6.3 Engineering Task Path (Task Brief)
+### 6.4 Engineering Task Path (Task Brief)
 
 Applicable conditions: does not satisfy §6.1 simple task judgment.
 
@@ -165,7 +191,8 @@ If `reports/project_pulse.md` missing:
 Applicable conditions:
 
 - Engineering task: task brief `approved`, split into one or more work orders per objective
-- Simple task: already generated single work order in §6.2, skip this stage
+- Simple task: already generated single work order in §6.3, skip this stage
+- Micro task: no work order generated (§6.2), skip this stage
 
 Execution (engineering task):
 
@@ -188,7 +215,7 @@ Work orders execute only after `approved`:
 1. Read input documents and code context per work order
 2. Implement, review, analyze, or update docs per bound workflow
 3. Must not silently expand scope
-4. If scope, architecture, specs, or risk changes detected, pause and return to corresponding flow (simple task over-boundary upgrades to engineering task per §6.2)
+4. If scope, architecture, specs, or risk changes detected, pause and return to corresponding flow (micro task over-boundary upgrades per §6.2; simple task over-boundary upgrades to engineering task per §6.3)
 5. Record key decisions, deviations, risks
 6. After each work order completion, mark work order status `done` in owning task brief §7 work order register, sync update path, estimates, actuals (simple tasks no task brief, skip)
 7. Any execution failure must be handled per `.AI/process/error_handling.md` §1, no silent retry or ignore
@@ -196,6 +223,8 @@ Work orders execute only after `approved`:
 ## 9. Verification and Test Gate
 
 After changes executed, **test is default action**:
+
+> **Micro Task Exception**: micro tasks (§6.2) do not execute per-task test; verification deferred to user test or centralized test per `alds_standards.md` §21.1. Ledger rows stay `unverified` until closure evidence arrives; must not set `verified` without evidence.
 
 1. AI defaults to running tests per work order verification method / verification matrix; frontend changes must include browser automation visual testing (`alds_standards.md` §21.2)
 2. Execute required reviews or audits per workflow
@@ -205,11 +234,11 @@ After changes executed, **test is default action**:
 
 **User Self-Test Exception**: User may explicitly declare "user will self-test and return results". AI stops, does not self-mark complete, waits for user test results (must include verification evidence) before archiving. Results without evidence not accepted.
 
-No verification/test results (whether AI runs or user returns), must not mark complete. Frontend tasks must not substitute "manually clicked verified" for automated test evidence.
+No verification/test results (whether AI runs or user returns), must not mark complete; micro task ledger rows must not set `verified` without user test or centralized test evidence. Frontend tasks must not substitute "manually clicked verified" for automated test evidence.
 
 ## 10. Document Update, Archive, and Commit
 
-After verification results `approved`:
+After verification results `approved` (micro tasks: ledger line + per-task git commit execute immediately after execution per §6.2, no verification approval prerequisite; status and evidence backfill at deferred closure):
 
 1. Update task brief, work orders, related project docs, analysis reports, or technical debt records
 2. Migrate completed work orders as `{base}_{YYYYMMDD_HHMM}.md` to `reports/completed/plan/`
@@ -223,6 +252,8 @@ After verification results `approved`:
 10. Write git commit, message describes task, key changes, verification results
 
 **Simple Task Archive**: Simple tasks no task brief, no project pulse, only ledger is add line at first row below header in `reports/simple_tasks.md` (newest on top), columns: date/summary/type/risk/net change/verification evidence/work order path; work order archived per step 2 to `reports/completed/plan/`.
+
+**Micro Task Archive**: Micro tasks no task brief, no work order, no archive artifacts, no project pulse; only ledger is add line at first row below header in `reports/micro_tasks.md` (newest on top, status `unverified`); git commit per task. Verification closure (status and evidence backfill) happens when user test results or centralized test results arrive (§9).
 
 ## 11. Error Handling
 
@@ -250,7 +281,7 @@ After processing a **substantive instruction**, append one line to `reports/sess
 | `Repo` | Branch@HEAD·dirty file count |
 | `User Input` | Original or compact paraphrase |
 | `AI Response` | One-line summary |
-| `Artifact·Path` | Output·task path (simple/engineering) |
+| `Artifact·Path` | Output·task path (micro/simple/engineering) |
 | `Context` | Workflow·READ_SET count·matched skills |
 
 Rules:

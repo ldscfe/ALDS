@@ -20,6 +20,7 @@ Flat ledger files (at `reports/` root, not flowing through active/completed):
 | File | Purpose |
 | :--- | :--- |
 | `reports/simple_tasks.md` | Ledger of completed simple tasks (one line per task, newest on top) |
+| `reports/micro_tasks.md` | Ledger of micro tasks / one-sentence requirements (one line per task, newest on top, status column carries deferred verification closure) |
 | `reports/session_log.md` | Ledger of substantive user instructions + AI response summary + metadata (one line per instruction, newest on top) |
 
 Note: This document is for guidance only; modification is prohibited.

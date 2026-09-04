@@ -3,8 +3,8 @@ title: ALDS Task Profile Standard
 doc_type: standard
 status: active
 scope: ALDS
-updated: 2026-08-10
-version: 1.1.0
+updated: 2026-09-04
+version: 1.1.1
 related_docs:
   - .AI/standards/workflow_engine.md
   - .AI/standards/enums.md
@@ -29,7 +29,7 @@ Its sole purpose: turn conditional rows in workflow required documents tables (d
 | `task_type` | User request + `enums.md` §task types | `feature` / `bugfix` / `refactor` / `review` / `optimization` / `testing` / `governance` / `documentation` / `technical_debt` | Workflow selection, base read set, skills main axis |
 | `target_area` | Request/target file paths | Module name or file path | Which `specs/`, `architecture/` sub-docs to load |
 | `change_scope` | Change surface | `single_point` / `single_module` / `cross_module` / `architecture_level` | Whether to load `architecture/`, `invariants/`, `guards/` |
-| `risk_level` | `enums.md` §6.1 quantification criteria | `low` / `medium` / `high` / `critical` / `unknown` | Task path (simple/engineering), whether to load invariants/guards |
+| `risk_level` | `enums.md` §6.1 quantification criteria | `low` / `medium` / `high` / `critical` / `unknown` | Task path (micro/simple/engineering), whether to load invariants/guards |
 | `active_language` | `workflow_engine.md` §4.1 | One of project languages | Which language-specific skill to load |
 
 ## 3. Determination Steps (Only from Task Description + project.yaml)
@@ -73,4 +73,4 @@ Below table shows typical profiles' **expected results after evaluating workflow
 
 ## 7. Relationship with Task Path
 
-Profile's `risk_level` + `change_scope` + effort/change volume + whether part of existing engineering task, together determine task path (simple/engineering), see `start.md` §6.1. Profile itself does not decide path, only provides input fields for path judgment.
+Profile's `risk_level` + `change_scope` + effort/change volume + whether part of existing engineering task, together determine task path (micro/simple/engineering), see `start.md` §6.1. Profile itself does not decide path, only provides input fields for path judgment.

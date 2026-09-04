@@ -3,7 +3,7 @@ title: Unified Task Flow
 doc_type: workflow
 status: active
 scope: workflow
-updated: 2026-08-10
+updated: 2026-09-04
 description: Default routing workflow for tasks that do not immediately match a specialized path
 variables: [project, languages, active_language, summary, artifact_kind, task_type, intent_mode, change_scope, risk_level, target_area, module]
 ---
@@ -56,14 +56,15 @@ Used when task temporarily cannot directly fit into a specialized process.
 3. Match possible general and language-specific skills
 4. Mark unknown scope, do not invent
 5. Decide which specialized process to enter, and per `.AI/start.md` §6.1 judge task path:
-   1. **Simple Task**: Directly generate single work order, skip task brief
-   2. **Engineering Task**: Generate independent task brief
+   1. **Micro Task**: Direct execution, no work order, add line to `reports/micro_tasks.md` (status `unverified`), verification deferred
+   2. **Simple Task**: Directly generate single work order, skip task brief
+   3. **Engineering Task**: Generate independent task brief
 6. If cannot implement yet, generate task brief (engineering task) or work order (simple task)
 
 ## Output
 
 - Routing result
-- Task brief draft (engineering task) or work order draft (simple task)
+- Task brief draft (engineering task), work order draft (simple task), or micro task ledger line (micro task)
 - Risk explanation
 
 ## Fallback

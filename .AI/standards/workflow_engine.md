@@ -148,7 +148,7 @@ When workflow A routes to workflow B, READ_SET transfers whole, no reset. B only
 4. If exists, overlay load (check READ_SET deduplication)
 5. When language undetermined, must not reverse-infer project language just because language-specific file exists
 
-> **Task Path Independent Matching**: Skill matching rules do not vary by task path (simple/engineering). Both task types share skill hits and load order. `.AI/project/` subdirectory load conditions per §8.4 and `task_profile.md` §5 negative list strictly interpreted.
+> **Task Path Independent Matching**: Skill matching rules do not vary by task path (micro/simple/engineering). All task tiers share skill hits and load order. `.AI/project/` subdirectory load conditions per §8.4 and `task_profile.md` §5 negative list strictly interpreted.
 
 > **Hit Count Constraint**: Default max 1 general + 1 language-specific; multiple candidates take most relevant to `task_type` main axis, others not loaded. If second skill domain truly needed, record reason. Authoritative definition in `.AI/standards/task_profile.md` §6.
 

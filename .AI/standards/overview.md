@@ -3,7 +3,7 @@ title: ALDS Standards Overview
 doc_type: standard
 status: active
 scope: ALDS
-updated: 2026-08-10
+updated: 2026-09-04
 summary: Summary of the ALDS standards layer and reading guidance.
 related_docs:
   - .AI/standards/alds_standards.md
@@ -40,7 +40,7 @@ ALDS baseline requirements:
 7. The project pulse records task brief status; task briefs record the status of their work orders
 8. Verification evidence takes precedence over subjective statements
 9. After completion, documents must be updated, archived, and a git commit written
-10. Task weight is decided by the task path determination in `start.md` §6.1 (simple task / engineering task), no longer by the project-level `governance_mode`; criteria and escalation triggers are in `start.md` §6.1 and `enums.md` §13
+10. Task weight is decided by the task path determination in `start.md` §6.1 (micro task / simple task / engineering task), no longer by the project-level `governance_mode`; criteria and escalation triggers are in `start.md` §6.1 and `enums.md` §13
 
 ## 3. Quick Decisions
 
@@ -49,7 +49,7 @@ ALDS baseline requirements:
 | What are ALDS's overall rules | `.AI/standards/alds_standards.md` |
 | Which flow does this kind of request follow | `.AI/standards/workflow_engine.md` |
 | Which English value should an approval or status record | `.AI/standards/enums.md` |
-| Is a task simple or engineering | `.AI/start.md` §6.1, `.AI/standards/enums.md` §13 |
+| Is a task micro, simple, or engineering | `.AI/start.md` §6.1, `.AI/standards/enums.md` §13 |
 | What files are in the standards directory | `.AI/standards/index.md` |
 
 ## 4. Boundaries

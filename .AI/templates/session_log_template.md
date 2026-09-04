@@ -35,7 +35,7 @@ date '+%Y-%m-%d %H:%M %z'; hostname; uname -srm; git rev-parse --abbrev-ref HEAD
 | `Repo` | Branch@HEAD·dirty file count | `main@496f768·2Δ` |
 | `User Input` | Original or compact paraphrase | `"commit"` |
 | `AI Response` | One-line summary of what done | `amend commit to English, remove Co-Authored-By` |
-| `Artifact·Path` | Output·task path (simple/engineering) | `commit 496f768·simple task` |
+| `Artifact·Path` | Output·task path (micro/simple/engineering) | `commit 496f768·simple task` |
 | `Context` | Workflow·READ_SET count·matched skills | `feature_development·READ_SET 7·git` |
 
 > Merge related fields to carry rich info while controlling table width. No value fill `—`.

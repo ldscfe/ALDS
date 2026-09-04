@@ -46,7 +46,7 @@ After reading, do only one thing: judge whether to enter `.AI/start.md` or `.AI/
 | `initialized` | Standard tasks | Enter `.AI/start.md` |
 | Any | Cannot determine | Enter `.AI/start.md`, standard flow loads final decision basis then routes |
 
-> **Task Path Independent Routing**: Entry routing behavior does not differ by task path (simple task/engineering task). Both enter `.AI/start.md`; path difference manifests in `start.md` §6.1 task path judgment (see `start.md` §6.1).
+> **Task Path Independent Routing**: Entry routing behavior does not differ by task path (micro task/simple task/engineering task). All enter `.AI/start.md`; path difference manifests in `start.md` §6.1 task path judgment (see `start.md` §6.1).
 
 ## 2. Routing Rules
 

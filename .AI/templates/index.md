@@ -20,6 +20,7 @@ This directory stores standard templates: document templates and the project str
 | `prd_template.md` | Product requirements document |
 | `project_pulse_template.md` | Project pulse ledger |
 | `simple_task_list_template.md` | Simple task ledger (`reports/simple_tasks.md`) |
+| `micro_task_list_template.md` | Micro task (one-sentence requirement) ledger (`reports/micro_tasks.md`) |
 | `session_log_template.md` | Session log ledger (`reports/session_log.md`) |
 | `technical_debt_template.md` | Technical debt record |
 | `frontend_verification_guard.md` | Frontend E2E verification guard; copied to project `.AI/project/guards/` during initialization |

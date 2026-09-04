@@ -3,7 +3,7 @@ title: ALDS Glossary
 doc_type: standard
 status: active
 scope: ALDS
-updated: 2026-08-10
+updated: 2026-09-04
 related_docs:
   - .AI/standards/alds_standards.md
   - .AI/standards/enums.md
@@ -21,7 +21,7 @@ This table centrally defines key terms used throughout ALDS. Each term's **autho
 | ALDS | AI-driven Lifecycle Delivery System, document-first AI collaborative delivery governance framework. Is process governance protocol, not runtime/software package/build tool, does not make engineering judgments. | `alds_standards.md` §1–§3 |
 | Process Governance Protocol | Rule set constraining AI-assisted development in traceable, verifiable, auditable delivery closed loop; contains no business rules, language implementation details, test/release commands. | `alds_standards.md` §1 |
 | Engineering Judgment | Data structures, algorithms, consistency models, protocol selection, etc. design decisions; ALDS does not make these for Agent, must be provided by `.AI/project/` context or humans. | `alds_standards.md` §1, §10 |
-| Task Path | `simple` (simple task, single work order, add line to `simple_tasks.md` after completion) or `full` (engineering task, task brief + work order). Judgment in `start.md` §6.1. | `start.md` §6.1, `enums.md` §13 |
+| Task Path | `micro` (micro task / one-sentence requirement: no work order, direct execution, add line to `micro_tasks.md` after completion, verification deferred), `simple` (simple task, single work order, add line to `simple_tasks.md` after completion), or `full` (engineering task, task brief + work order). Judgment in `start.md` §6.1. | `start.md` §6.1, `enums.md` §13 |
 
 ## 2. Facts & Contracts
 
@@ -39,8 +39,9 @@ This table centrally defines key terms used throughout ALDS. Each term's **autho
 | Term | Definition | Authoritative Source |
 | :--- | :--- | :--- |
 | Task Brief | Task-level control document, defines objective/scope/non-goals/workflow/verification methods; placed in `reports/active/brief/`. | `alds_standards.md` §15 |
-| Work Order | Execution-level control document, defines specific what to change/how to change/how to verify; placed in `reports/active/plan/`. Simple tasks directly generate work order, no task brief. | `alds_standards.md` §16 |
-| Simple Task List | Line-by-line ledger of completed simple tasks (one line/task, newest on top); fixed at `reports/simple_tasks.md`. Simple task's only ledger record, not recorded in project pulse. | `alds_standards.md` §16, `start.md` §6.2, §10 |
+| Work Order | Execution-level control document, defines specific what to change/how to change/how to verify; placed in `reports/active/plan/`. Simple tasks directly generate work order, no task brief; micro tasks generate no work order. | `alds_standards.md` §16 |
+| Micro Task List | Line-by-line ledger of micro tasks / one-sentence requirements (one line/task, newest on top); fixed at `reports/micro_tasks.md`. Micro task's only ledger record, not recorded in project pulse; status column carries deferred verification closure (`unverified`/`verified`/`failed`/`upgraded`). | `start.md` §6.2, `alds_standards.md` §21.1, `enums.md` §15 |
+| Simple Task List | Line-by-line ledger of completed simple tasks (one line/task, newest on top); fixed at `reports/simple_tasks.md`. Simple task's only ledger record, not recorded in project pulse. | `alds_standards.md` §16, `start.md` §6.3, §10 |
 | Session Log | Line-by-line ledger of substantive user instructions + AI response summary + metadata (environment/model/session/repo status) (one line/instruction, newest on top); fixed at `reports/session_log.md`. Only records substantive instructions, no auto-commit. | `start.md` §12 |
 | Project Pulse | Project-level task brief ledger (not phase task brief, not work order list); fixed at `reports/project_pulse.md`. | `alds_standards.md` §17 |
 | Write Plan | Plan that must be listed and approved before modifying `.AI/project/` (target files/section summaries/fact sources/inferred items/pending confirmations/change scope). | `alds_standards.md` §12, §20 |
