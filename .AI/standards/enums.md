@@ -3,7 +3,7 @@ title: ALDS Controlled Enumerations
 doc_type: standard
 status: active
 scope: ALDS
-updated: 2026-09-04
+updated: 2026-10-19
 version: 1.2.2
 ---
 
@@ -240,7 +240,7 @@ stateDiagram-v2
 
 ```mermaid
 stateDiagram-v2
-    [*] --> unverified
+    [*] --> unverified: execution complete, ledger row recorded
     unverified --> verified: user test / centralized test passed (evidence recorded)
     unverified --> failed: test found problem
     unverified --> upgraded: boundary exceeded during execution
@@ -260,4 +260,4 @@ Micro task ledger (`reports/micro_tasks.md`) status column uses following enumer
 | `failed` | Test found problem, enters fix flow |
 | `upgraded` | Execution exceeded micro task boundary, upgraded to simple/engineering task |
 
-> Must not set `verified` without user test or centralized test evidence. Fix of a `failed` row is a new task, re-judged per `start.md` §6.1.
+> Must not set `verified` without user test or centralized test evidence. A `failed` or `upgraded` row is terminal. Fixing a `failed` row is a new task, re-judged per `start.md` §6.1. After `upgraded`, closure follows the upgraded tier's flow; this row receives no verification backfill.

@@ -3,7 +3,7 @@ title: Unified Task Flow
 doc_type: workflow
 status: active
 scope: workflow
-updated: 2026-09-04
+updated: 2026-10-19
 description: Default routing workflow for tasks that do not immediately match a specialized path
 variables: [project, languages, active_language, summary, artifact_kind, task_type, intent_mode, change_scope, risk_level, target_area, module]
 ---
@@ -59,12 +59,12 @@ Used when task temporarily cannot directly fit into a specialized process.
    1. **Micro Task**: Direct execution, no work order, add line to `reports/micro_tasks.md` (status `unverified`), verification deferred
    2. **Simple Task**: Directly generate single work order, skip task brief
    3. **Engineering Task**: Generate independent task brief
-6. If cannot implement yet, generate task brief (engineering task) or work order (simple task)
+6. If cannot implement yet, generate task brief (engineering task) or work order (simple task); micro tasks: a one-sentence instruction suffices to implement
 
 ## Output
 
 - Routing result
-- Task brief draft (engineering task), work order draft (simple task), or micro task ledger line (micro task)
+- Task brief draft (engineering task), work order draft (simple task), or micro task ledger line in `reports/micro_tasks.md` (micro task)
 - Risk explanation
 
 ## Fallback

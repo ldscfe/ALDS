@@ -3,7 +3,7 @@ title: ALDS Task Profile Standard
 doc_type: standard
 status: active
 scope: ALDS
-updated: 2026-09-04
+updated: 2026-10-19
 version: 1.1.1
 related_docs:
   - .AI/standards/workflow_engine.md
@@ -60,7 +60,7 @@ Below table shows typical profiles' **expected results after evaluating workflow
 
 1. **Off-table no load**: Documents not listed in workflow required documents table never loaded (`start.md` §5.4 enforced).
 2. **Subdirectories only on direct hit**: `.AI/project/` subdirectories only loaded when profile fields **directly hit**; "possibly relevant" "just in case" not loading basis.
-3. **No reverse补读**: After profile determined, must not补读 due to uncertainty; if补读 truly needed must record deviation per `alds_standards.md` §28.
+3. **No reverse backfill-reading**: After profile determined, must not backfill-read due to uncertainty; if backfill-reading truly needed must record deviation per `alds_standards.md` §28.
 4. **Simple tasks stricter**: When task judged simple task (see `start.md` §6.1), §4 table "Expected No-Read" column upgrades to mandatory no-read.
 
 ## 6. Skills Narrowing

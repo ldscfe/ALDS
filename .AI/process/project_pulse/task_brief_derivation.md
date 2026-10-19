@@ -3,7 +3,7 @@ title: Project Pulse Task Brief Derivation
 doc_type: process
 status: active
 scope: ALDS
-updated: 2026-05-21
+updated: 2026-10-19
 description: Rules for deriving task briefs from Project Pulse other-task ledger entries
 ---
 
@@ -157,7 +157,7 @@ Sync Rules:
 ## Prohibitions
 
 - Prohibited from directly deriving optimization, testing, technical_debt task briefs without analysis report.
-- Prohibited from skipping analysis phase claiming optimization, testing补齐, or technical debt handling already established.
+- Prohibited from skipping analysis phase claiming optimization, testing backfill, or technical debt handling already established.
 - Prohibited from leaving analysis report path, task brief path, or derivation status empty while claiming ledger synced.
 - Prohibited from deriving task briefs for issues analysis concluded don't stand.
 - Prohibited from using work orders as project pulse "Other Task Ledger" main entries.

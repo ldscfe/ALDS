@@ -694,6 +694,39 @@ Must check:
 
 ---
 
+## Alignment / Spacing Verification: Quantify, Don't Eyeball
+
+UI changes involving alignment or spacing **must not be judged by eye alone** (misalignment of same-height, different-Y elements is nearly invisible to the naked eye); measure center-point deltas with Playwright `getBoundingClientRect()`, tolerance ≤ 2–3px.
+
+Two mandatory checks:
+
+```
+1. Every label ↔ its input: vertical centers
+2. Columns side by side within the same row: vertical centers relative to each other
+```
+
+Reusable spec snippet (open dialog → iterate `.form-row` → measure label↔input and column↔column → assert):
+
+```ts
+const TOL = 3
+const rows = await page.evaluate(() =>
+  Array.from(document.querySelectorAll('.form-row')).map(row =>
+    Array.from(row.querySelectorAll(':scope > .el-form-item')).map(it => {
+      const label = it.querySelector('.el-form-item__label') as HTMLElement
+      const ctrl = (it.querySelector('.el-input__wrapper, .el-select__wrapper')
+        || it.querySelector('.el-form-item__content')) as HTMLElement
+      const cy = (e: HTMLElement) => { const b = e.getBoundingClientRect(); return b.y + b.height / 2 }
+      return { name: (label.textContent || '').trim(), labelCy: cy(label), inputCy: cy(ctrl) }
+    })
+  )
+)
+// Assert: every label↔input Δ ≤ TOL; within the same form-row, the Δ between any two columns' inputCy ≤ TOL
+```
+
+> War story: the create/edit user dialog was once misaligned ~8px by (1) customizing input height without adding `.el-form-item { align-items: center }`, and (2) an inline item's `:last-child` margin-clear shifting two columns apart; both were located and fixed by this quantified method.
+
+---
+
 # 16. Forbidden Patterns
 
 AI must not generate:

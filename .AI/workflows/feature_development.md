@@ -3,7 +3,7 @@ title: Feature Development Workflow
 doc_type: workflow
 status: active
 scope: workflow
-updated: 2026-09-04
+updated: 2026-10-19
 description: Controlled implementation workflow for bounded changes
 variables: [project, languages, active_language, module, artifact_kind, task_type, change_scope, risk_level]
 ---
@@ -51,7 +51,7 @@ For feature development, bug fixes, bounded refactoring, and documentation imple
 2. Read general docs first, then locate project docs by directory, finally match language or module specialized docs
 3. Hit general and language-specific skills per task intent and language
 4. Per `.AI/start.md` §6.1 judge task path:
-   1. **Micro Task**: Direct execution, no work order, after completion add line to `reports/micro_tasks.md` (status `unverified`, verification deferred)
+   1. **Micro Task**: Direct execution, no work order, after completion add line to `reports/micro_tasks.md` (status `unverified`, verification deferred to user testing or centralized testing)
    2. **Simple Task**: Directly generate single work order (frontend tasks must include layout diagram and functional overview, `alds_standards.md` §16.3), skip task brief, after completion add line to `reports/simple_tasks.md`
    3. **Engineering Task**: Generate task brief first, then split one or more work orders based on task brief
 5. Wait for user approval then implement
@@ -60,7 +60,7 @@ For feature development, bug fixes, bounded refactoring, and documentation imple
 
 ## Output
 
-- Task brief (engineering task), work order (simple task), or micro task ledger line (micro task)
+- Task brief (engineering task), work order (simple task), or micro task ledger line in `reports/micro_tasks.md` (micro task, verification deferred to user testing or centralized testing)
 - Code or document changes
 - Verification records
 

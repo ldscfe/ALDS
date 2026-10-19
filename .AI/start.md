@@ -3,7 +3,7 @@ title: ALDS Standard Task Flow
 doc_type: start
 status: active
 scope: ALDS
-updated: 2026-09-04
+updated: 2026-10-19
 ---
 
 # Standard Task Flow
@@ -36,7 +36,7 @@ If user goal is to initialize `.AI/project/` baseline, stop this flow, route to 
 
 ```mermaid
 flowchart TD
-  A["intake: read index.md + project.yaml fact source status"] --> B{事实源状态}
+  A["intake: read index.md + project.yaml fact source status"] --> B{"fact source status"}
   B -- absent/empty_or_incomplete --> I[".AI/project/init.md"]
   B -- initialized --> C["Task Profile task_profile.md §3: 5 fields"]
   C --> D["Intent Routing §3 → Selected Workflow"]
@@ -136,7 +136,7 @@ All conditions below simultaneously satisfied = **Simple Task**, go §6.3; any n
 Micro tasks (one-sentence requirements) generate no task brief and no work order; user instruction itself is execution authorization:
 
 1. Judge per §6.1; ambiguity blocking execution must be clarified conversationally first (not a formal approval node)
-2. Directly execute per selected workflow and minimum context; execution discipline unchanged (no silent scope expansion, error handling per §11)
+2. Execute directly per the selected workflow and minimum context — the user's instruction is the authorization, no approval node; execution discipline is unchanged (no silent scope expansion; error handling per §11)
 3. If execution actually exceeds micro task boundary (multi-point change, risk > `low`, touches invariants/guards, new dependencies, net change > `50` lines or > `3` files), pause and upgrade: backfill single work order (simple task, §6.3) or task brief (engineering task, §6.4), ledger row status set `upgraded`
 4. After completion add line at first row below header in `reports/micro_tasks.md` (newest on top), status `unverified`; columns per `.AI/templates/micro_task_list_template.md`
 5. Verification not executed per task: deferred to user test or centralized test (both user-triggered, §9); closure updates status and evidence, no evidence = no `verified`
@@ -224,7 +224,13 @@ Work orders execute only after `approved`:
 
 After changes executed, **test is default action**:
 
-> **Micro Task Exception**: micro tasks (§6.2) do not execute per-task test; verification deferred to user test or centralized test per `alds_standards.md` §21.1. Ledger rows stay `unverified` until closure evidence arrives; must not set `verified` without evidence.
+> **Micro Task Exception**: micro tasks (§6.2) do not execute per-task test; this stage's test gate is deferred (rules per `alds_standards.md` §21.1). Ledger rows stay `unverified` until closure evidence arrives; must not set `verified` without evidence.
+>
+> - Ledger row lands with status `unverified`, which completes recording; the `verified` transition still requires evidence. Transitions `unverified` → `verified` / `failed` / `upgraded` per `.AI/standards/enums.md` §15.
+> - Frontend micro-task visual verification obligation transfers to the centralized test or user test point; uncovered frontend rows must not close.
+> - **User test**: user tests and returns results (output/screenshot preferred); evidence backfilled per row — passed rows set `verified`, failed rows set `failed` and enter fix flow.
+> - **Centralized test**: only user-triggered on demand (e.g., "centralized test" instruction); AI runs available test suites covering all `unverified` rows (including core-path browser automation verification for unverified frontend micro tasks), results backfilled per row, failed rows set `failed` and enter fix flow.
+> - AI must not proactively remind or urge verification — the user decides when to verify.
 
 1. AI defaults to running tests per work order verification method / verification matrix; frontend changes must include browser automation visual testing (`alds_standards.md` §21.2)
 2. Execute required reviews or audits per workflow
@@ -253,7 +259,7 @@ After verification results `approved` (micro tasks: ledger line + per-task git c
 
 **Simple Task Archive**: Simple tasks no task brief, no project pulse, only ledger is add line at first row below header in `reports/simple_tasks.md` (newest on top), columns: date/summary/type/risk/net change/verification evidence/work order path; work order archived per step 2 to `reports/completed/plan/`.
 
-**Micro Task Archive**: Micro tasks no task brief, no work order, no archive artifacts, no project pulse; only ledger is add line at first row below header in `reports/micro_tasks.md` (newest on top, status `unverified`); git commit per task. Verification closure (status and evidence backfill) happens when user test results or centralized test results arrive (§9).
+**Micro Task Archive**: Micro tasks no task brief, no work order, no archive artifacts, no project pulse; only ledger is add line at first row below header in `reports/micro_tasks.md` (newest on top, status `unverified`); git commit per task. Verification closure (status and evidence backfill) happens when user test results or centralized test results arrive (§9); backfill updates only the ledger row — no retroactive work order.
 
 ## 11. Error Handling
 

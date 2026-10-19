@@ -3,7 +3,7 @@ title: ALDS Standards
 doc_type: standard
 status: active
 scope: ALDS
-updated: 2026-09-04
+updated: 2026-10-19
 version: 1.4.0
 related_docs:
   - .AI/index.md
@@ -92,11 +92,11 @@ All ALDS processes must obey:
 | Workflow Driven | Standard tasks must enter `.AI/start.md` and select explicit workflow |
 | Default Fallback | When cannot judge process must enter `unified_task_flow`, must not implement without workflow |
 | Minimum Context | Only read minimum relevant documents needed for judgment and execution |
-| Approve Before Write | Task briefs, work orders, write plans, verification results must be approved before next stage (micro tasks exempt: direct execution per user instruction, no control document approval nodes) |
+| Approve Before Write | Task briefs, work orders, write plans, verification results must be approved before next stage (micro tasks exempt: direct execution per user instruction, no control document approval nodes, but verification closure still requires evidence; see `start.md` §6.2) |
 | Machine-First Verification | Runnable, reproducible verification evidence takes priority over subjective explanations |
 | Risk Explicit | Unknowns, verification gaps, scope deviations, high-risk changes must be explicitly recorded |
 | Auditable | Objectives, scope, decisions, verification, approvals, archive, commits must be traceable |
-| Path Judgment | Tasks judged per `.AI/start.md` §6.1 as micro, simple, or engineering; micro tasks direct execution (no task brief, no work order, ledger line only, verification deferred per §21.1), simple tasks direct work order (no task brief), engineering tasks task brief + work order. All three share workflow routing, required docs table. |
+| Path Judgment | Tasks judged per `.AI/start.md` §6.1 as micro, simple, or engineering; micro tasks direct execution (no task brief, no work order, ledger line only, verification deferred per §21.1), simple tasks direct work order (no task brief), engineering tasks task brief + work order. All three share workflow routing, required docs table, and verification rules (micro tasks defer verification per §21.1). |
 
 ## 6. ALDS Layered Model
 
@@ -203,7 +203,7 @@ Architecture, specs, invariants, guards changes must enter governance evolution 
 
 Standard tasks must be controlled by `.AI/start.md`. Tasks have three tiers (judgment in `.AI/start.md` §6.1):
 
-- **Micro Task**: `Intent Routing -> Minimum Context -> Direct Execution (no work order) -> micro_tasks.md add line (unverified) -> Git Commit` (verification deferred per §21.1)
+- **Micro Task**: `Intent Routing -> Minimum Context -> Direct Execution (no work order) -> micro_tasks.md add line (unverified) -> Git Commit` (per-task git commit; no per-task test requirement — verification deferred per §21.1)
 - **Simple Task**: `Intent Routing -> Minimum Context -> Single Work Order -> Approval -> Execution -> Verification(test default) -> simple_tasks.md add line + archive -> Git Commit`
 - **Engineering Task**: `Project Definition -> Intent Routing -> Minimum Context -> Task Brief -> Approval -> Work Order -> Approval -> Execution or Review -> Verification -> Approval -> Archive -> Git Commit`
 
@@ -213,7 +213,7 @@ Standard tasks must at minimum satisfy:
 - Read workflow declared required documents
 - After workflow selection judge `.AI/skills/` hits
 - Control document tier per `.AI/start.md` §6.1:
-  - **Micro Task**: no task brief or work order; execute directly per user instruction, add line to `reports/micro_tasks.md` (status `unverified`), verification deferred per §21.1
+  - **Micro Task**: no task brief or work order; execute directly per user instruction, add line to `reports/micro_tasks.md` (status `unverified`); per-task git commit, no per-task test requirement (verification deferred per §21.1)
   - **Simple Task**: single work order generated and wait for approval before execution; no task brief, no project pulse registration
   - **Engineering Task**: generate task brief and wait for approval; register or update task brief entry and status in `reports/project_pulse.md`; generate work order(s) per approved task brief and wait for approval; register or update work order entries and status in owning task brief
 - After execution form verification and audit results and wait for approval (micro tasks: deferred verification closure per §21.1)
@@ -432,7 +432,7 @@ ALDS uses two-level status sync:
 1. Project pulse records task brief status
 2. Task brief records owned work order status
 
-Micro tasks participate in neither level; their status maintained only in `reports/micro_tasks.md` per §21.1 deferred verification closure rules.
+Micro tasks participate in neither level; their status maintained only in `reports/micro_tasks.md` per §21.1 deferred verification closure rules. A micro task row starts `unverified`, then transitions `unverified` → `verified` / `failed` / `upgraded` per `.AI/standards/enums.md` §15 (fix of a `failed` row is a new task; after `upgraded`, closure follows the upgraded tier's flow); on boundary-exceeding upgrade, backfill control documents per `start.md` §6.2 step 3.
 
 Status sync semantics must remain consistent:
 
@@ -557,6 +557,9 @@ After change execution, test is default action:
   - **User test**: user tests and returns results; AI updates `reports/micro_tasks.md` row status to `verified` (or `failed`), evidence column records returned summary (screenshot/output path if any)
   - **Centralized test**: user explicitly triggers (e.g., "centralized test"); AI runs available tests covering all `unverified` rows, including browser automation visual verification (§21.2) for frontend rows; results backfill per row, failed rows set `failed` and enter fix flow
   - Micro task rows must not set `verified` without user test or centralized test evidence; frontend micro task visual verification obligation transfers to user/centralized test point, uncovered frontend rows must not close
+  - AI must not proactively remind or urge verification — the user decides when to verify.
+
+The ledger row may be written immediately after execution completes; however, status must not move to `verified` without test evidence (user test or centralized test results, per the closure paths above).
 
 ### 21.2 Frontend Page Change Verification
 
@@ -601,7 +604,7 @@ After verification results `approved`, must execute closure:
 
 Archive timestamp format fixed as `YYYYMMDD_HHMM`, at filename base end before `.md` extension.
 
-**Micro Task Closure**: Micro tasks have no archive artifacts; one line in `reports/micro_tasks.md` plus per-task git commit complete closure. Verification status and evidence backfill at deferred verification closure per §21.1.
+**Micro Task Closure**: Micro tasks have no archive artifacts; one line in `reports/micro_tasks.md` plus per-task git commit complete closure. Verification status and evidence backfill at deferred verification closure per §21.1; backfill updates only the ledger row's status and evidence columns.
 
 ## 24. Skills Specification
 
