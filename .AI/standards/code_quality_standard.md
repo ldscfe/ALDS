@@ -4,7 +4,7 @@ doc_type: standard
 status: active
 scope: ALDS
 version: 1.0.0
-updated: 2026-06-27
+updated: 2026-10-19
 related_docs:
   - .AI/standards/alds_standards.md
   - .AI/process/review/code_review_checklist.md
@@ -32,6 +32,7 @@ Applies to all projects, all languages' production code (non-test modules, non-t
 | No Bypassing Invariants | No implementation may ad-hoc bypass invariants or guards |
 | No Residue | Temporary, placeholder, debug constructs must not enter declared-complete deliveries |
 | Local Submits to Global | New code obeys existing style, naming, error handling conventions |
+| Simplest Correct Implementation | Prefer the simplest, correct, verifiable implementation; no solutions for unproven problems, no runtime defenses for issues eliminable by correct initialization and standard process, no premature complexity for hypothetical future needs |
 
 ## 3. Prohibitions
 
@@ -65,6 +66,15 @@ Applies to all projects, all languages' production code (non-test modules, non-t
 - Must not use conditional compilation (`#[cfg(...)]`) or feature flags as hardcoding alternatives to hide configs; config decisions must be runtime-observable, auditable.
 
 > Verification method: At work order review, check all new/modified config items have: (1) explicit source declaration; (2) reasonable defaults; (3) config doc synced update.
+
+### 3.5 Speculative Complexity Prohibited
+
+- Must not design solutions for problems not yet demonstrated: every defensive mechanism, compatibility layer, or abstraction must trace to an observed, reproducible problem source (requirement, spec, invariant, or failure evidence), not a conjectured one.
+- Must not add runtime defenses (fallbacks, fault tolerance, retries, sanitization) for issues that correct initialization and standard process can eliminate: fix the initialization and the process itself, keep production paths lean.
+- Must not introduce abstraction layers, parameters, or generalization ahead of requirements that may appear in the future; add them when the requirement materializes and is recorded.
+- Prefer the simplest implementation that is correct and verifiable; when a simpler correct implementation exists, choosing a more complex one requires justification and user approval per §6 deviation handling.
+
+> Verification method: At code review, for each defensive mechanism or abstraction introduced, check it traces to a recorded problem source; for each runtime defense, check the issue cannot be eliminated by initialization or process correction (consistent with `alds_standards.md` §5 machine-first verification: the problem must be evidenced, not asserted).
 
 ## 4. Language-Specific
 
