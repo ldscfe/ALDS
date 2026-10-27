@@ -3,8 +3,8 @@ title: ALDS Standards
 doc_type: standard
 status: active
 scope: ALDS
-updated: 2026-10-19
-version: 1.4.0
+updated: 2026-10-27
+version: 1.5.0
 related_docs:
   - .AI/index.md
   - .AI/start.md
@@ -66,7 +66,10 @@ ALDS methodology summarizes to:
 | Verification | Completion basis, answers "why consider result valid" |
 | Approval | Human decision point, answers "allow next stage" |
 | Archive and Git Commit | Audit loop, answers "where is completion record, how to trace code history" |
-| Task Path | Task path, answers "is this task micro (no control document, ledger line only), simple (single work order), or engineering (task brief + work order)" |
+| Task Path | Task path, answers "is this task micro (no control document, pre-development summary approved then execute, ledger line only), simple (single work order), or engineering (task brief + work order)" |
+| Pre-development Summary | Summary presented to the user before development: cause explanation (BUG only), summary, handling proposal (see `start.md` §3.1) |
+| Minimal Verification | After development, only necessary minimal verification and compile pass by default; centralized verification only on user instruction |
+| Categorized Merge | When the user requests a merge, local unpushed commits are squash-merged by category (see §23.1) |
 
 ALDS prohibits AI free play; requires AI to execute within confirmed facts, approved processes, and verifiable boundaries.
 
@@ -92,11 +95,11 @@ All ALDS processes must obey:
 | Workflow Driven | Standard tasks must enter `.AI/start.md` and select explicit workflow |
 | Default Fallback | When cannot judge process must enter `unified_task_flow`, must not implement without workflow |
 | Minimum Context | Only read minimum relevant documents needed for judgment and execution |
-| Approve Before Write | Task briefs, work orders, write plans, verification results must be approved before next stage (micro tasks exempt: direct execution per user instruction, no control document approval nodes, but verification closure still requires evidence; see `start.md` §6.2) |
+| Approve Before Write | Task briefs, work orders, write plans, verification results must be approved before next stage; any requirement/BUG must pass the pre-development summary and approval gate before development (`start.md` §3.1); micro tasks exempt from control document approval but not from the pre-development gate, and verification closure still requires evidence |
 | Machine-First Verification | Runnable, reproducible verification evidence takes priority over subjective explanations |
 | Risk Explicit | Unknowns, verification gaps, scope deviations, high-risk changes must be explicitly recorded |
 | Auditable | Objectives, scope, decisions, verification, approvals, archive, commits must be traceable |
-| Path Judgment | Tasks judged per `.AI/start.md` §6.1 as micro, simple, or engineering; micro tasks direct execution (no task brief, no work order, ledger line only, verification deferred per §21.1), simple tasks direct work order (no task brief), engineering tasks task brief + work order. All three share workflow routing, required docs table, and verification rules (micro tasks defer verification per §21.1). |
+| Path Judgment | Tasks judged per `.AI/start.md` §6.1 as micro, simple, or engineering; all three tiers require pre-development summary and approval before development (`start.md` §3.1). Micro tasks execute directly after approval (no task brief, no work order, ledger line only, verification deferred per §21.1), simple tasks direct work order (no task brief), engineering tasks task brief + work order. All three share workflow routing, required docs table, and verification rules (verification defaults to necessary minimal verification + compile pass; centralized verification only on user instruction, see §21). |
 
 ## 6. ALDS Layered Model
 
@@ -106,10 +109,10 @@ ALDS abstracts AI collaborative delivery into 8 universal layers. Each layer may
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | 1 | Project Context Layer | Carries project facts, architecture, specs, invariants, guards, roadmap | Project facts traceable to `.AI/project/project.yaml` or `.AI/project/` | Writing project facts into general standards | `project.yaml`, project index, architecture, specs, guards |
 | 2 | Specification and Contract Layer | Defines behavioral contracts, interface rules, boundary conditions, acceptance criteria | Behavior must have explicit source | Implementing spec-undefined behavior as deterministic | specs, invariants, guards |
-| 3 | Planning Layer | Transforms design, specs, user goals into task briefs/work orders, project pulse | Scope, non-goals, verification methods clear | Construction without work order (micro tasks exempt: direct execution per `start.md` §6.1-§6.2, ledger line only) | Task brief, work order, project pulse |
+| 3 | Planning Layer | Transforms design, specs, user goals into task briefs/work orders, project pulse | Scope, non-goals, verification methods clear | Construction without work order (micro tasks exempt: pre-development summary approved then execute per `start.md` §6.1-§6.2, ledger line only) | Task brief, work order, project pulse |
 | 4 | Workflow Routing Layer | Selects workflow and minimum reading context per input intent | Unified entry, traceable process | Construction without workflow, or new workflow per input format difference | Routing conclusion, workflow selection |
 | 5 | AI Execution Layer | Executes code, docs, review, analysis tasks within work order constraints | Execution scope constrained by work order | Silent scope expansion, unapproved writes | Code changes, doc changes, review records |
-| 6 | Verification Layer | Forms verification evidence via machine checks, rule verification, tests, human review | Verification methods and results must record; test default action | Substituting subjective explanations for verification | Verification records, audit results |
+| 6 | Verification Layer | Forms verification evidence via machine checks, rule verification, tests, human review | Verification methods and results must record; default is necessary minimal verification + compile pass | Substituting subjective explanations for verification | Verification records, audit results |
 | 7 | Risk Control Layer | Identifies risk levels, unknowns, verification gaps, upgrade conditions | High risk must upgrade confirmation | Hiding risk or bypassing approval | Risk explanations, upgrade records |
 | 8 | Integration and Archive Layer | Completion status backfill, archive, git commit | Archive and commit traceable | Complete without archive, without commit | archived, completed, git commit |
 
@@ -203,9 +206,9 @@ Architecture, specs, invariants, guards changes must enter governance evolution 
 
 Standard tasks must be controlled by `.AI/start.md`. Tasks have three tiers (judgment in `.AI/start.md` §6.1):
 
-- **Micro Task**: `Intent Routing -> Minimum Context -> Direct Execution (no work order) -> micro_tasks.md add line (unverified) -> Git Commit` (per-task git commit; no per-task test requirement — verification deferred per §21.1)
-- **Simple Task**: `Intent Routing -> Minimum Context -> Single Work Order -> Approval -> Execution -> Verification(test default) -> simple_tasks.md add line + archive -> Git Commit`
-- **Engineering Task**: `Project Definition -> Intent Routing -> Minimum Context -> Task Brief -> Approval -> Work Order -> Approval -> Execution or Review -> Verification -> Approval -> Archive -> Git Commit`
+- **Micro Task**: `Intent Routing -> Minimum Context -> Pre-development Summary and Approval (BUG: cause first) -> Direct Execution (no work order) -> Necessary minimal verification + compile pass -> micro_tasks.md add line (unverified) -> Git Commit (English)` (centralized verification only on user instruction, per §21.1)
+- **Simple Task**: `Intent Routing -> Minimum Context -> Single Work Order (itself the summary and proposal; BUG includes cause) -> Approval -> Execution -> Verification(minimal verification + compile) -> simple_tasks.md add line + archive -> Git Commit`
+- **Engineering Task**: `Project Definition -> Intent Routing -> Minimum Context -> Task Brief -> Approval -> Work Order -> Approval -> Execution or Review -> Verification(minimal verification + compile) -> Approval -> Archive -> Git Commit`
 
 Standard tasks must at minimum satisfy:
 
@@ -213,11 +216,11 @@ Standard tasks must at minimum satisfy:
 - Read workflow declared required documents
 - After workflow selection judge `.AI/skills/` hits
 - Control document tier per `.AI/start.md` §6.1:
-  - **Micro Task**: no task brief or work order; execute directly per user instruction, add line to `reports/micro_tasks.md` (status `unverified`); per-task git commit, no per-task test requirement (verification deferred per §21.1)
+  - **Micro Task**: no task brief or work order; execute directly per user instruction after pre-development summary and approval (`start.md` §3.1), add line to `reports/micro_tasks.md` (status `unverified`); per-task git commit, no per-task test requirement (verification deferred per §21.1)
   - **Simple Task**: single work order generated and wait for approval before execution; no task brief, no project pulse registration
   - **Engineering Task**: generate task brief and wait for approval; register or update task brief entry and status in `reports/project_pulse.md`; generate work order(s) per approved task brief and wait for approval; register or update work order entries and status in owning task brief
-- After execution form verification and audit results and wait for approval (micro tasks: deferred verification closure per §21.1)
-- After approval update docs, archive, write git commit (micro tasks: ledger line replaces archive artifacts, commit per task)
+- After execution perform only necessary minimal verification and compile pass, form verification and audit results and wait for approval (micro tasks: deferred verification closure per §21.1; centralized verification only on user instruction)
+- After approval update docs, archive, write git commit (one commit per task, commit message in English only; micro tasks: ledger line replaces archive artifacts)
 
 ## 12. Project Initialization Flow
 
@@ -506,6 +509,8 @@ ALDS constrains not only file artifacts but AI narrative to users. To reduce mea
 
 ALDS does not specify specific test tools, but every execution must state verification method. Machine-reproducible verification prioritized over subjective explanations; human review cannot substitute runnable verification.
 
+**Default verification posture**: after development, execute only necessary minimal verification and compile pass (compiles/builds, core paths intact); full test suites and centralized verification run only on explicit user instruction — without instruction, verification scope must not be expanded.
+
 When task affects multiple runtime conditions, data conditions, config conditions, or deliverables, must plan verification matrix per `.AI/process/validation/validation_matrix.md`, clarifying coverage levels, verification evidence, and uncovered risks.
 
 Verification may include:
@@ -595,7 +600,7 @@ After verification results `approved`, must execute closure:
 5. If all work orders complete, mark task brief `completed` migrate to `reports/completed/brief/`
 6. If task brief archive path changes, sync update `reports/project_pulse.md` task brief path
 7. Check git diff, keep only task-related changes
-8. Write git commit, message describes task, key changes, verification results
+8. Write one git commit per task: commit messages in English only (all repositories, including Chinese-language and dual-language mirror repositories), describing task and key changes (`skills/git.md` §7)
 
 **Historical Archive Compatibility**:
 
@@ -605,6 +610,16 @@ After verification results `approved`, must execute closure:
 Archive timestamp format fixed as `YYYYMMDD_HHMM`, at filename base end before `.md` extension.
 
 **Micro Task Closure**: Micro tasks have no archive artifacts; one line in `reports/micro_tasks.md` plus per-task git commit complete closure. Verification status and evidence backfill at deferred verification closure per §21.1; backfill updates only the ledger row's status and evidence columns.
+
+### 23.1 Periodic Categorized Merge
+
+The user periodically requests a **merge**: local unpushed commits are squash-merged by category (`feat`/`fix`/`docs`/`refactor` etc.). Rules:
+
+- Only **local unpushed** commits are rewritten; pushed history must not be rewritten
+- Merged commit messages are in English only, giving per-category summaries of modifications
+- Commit messages **must not** contain: signatures (e.g., `Co-authored-by`, `Generated-by`), BUG descriptions, tests, logs, archives, or similar content
+- Operation rules per `skills/git.md` §10
+- Ledger records (e.g., `reports/micro_tasks.md`) and final commits are **not one-to-one**: the ledger records process facts per task; commit history is the result after categorized merges — no alignment required
 
 ## 24. Skills Specification
 
@@ -669,12 +684,15 @@ Following behaviors prohibited:
 - Standard tasks bypass `.AI/start.md`
 - Execute tasks without workflow
 - Generate work order before task brief approved
-- Execute before work order approved (micro tasks exempt: direct execution per `start.md` §6.1-§6.2)
+- Execute before work order approved (micro tasks exempt from work order approval, but must pass the pre-development summary and approval gate first, see `start.md` §3.1, §6.2)
 - Modify `.AI/project/` before write plan approved
 - Implement spec-undefined behavior as deterministic behavior
 - Disguise architecture, specs, invariants, guards changes as ordinary implementation
 - Declare complete without verification (micro tasks: set ledger row `verified` without user test or centralized test evidence)
 - Silent scope expansion
+- Start writing code before the pre-development summary and approval gate passes (without explicit user consent/approval)
+- Expand testing/verification beyond necessary minimal verification and compile pass after development (unless the user instructs centralized verification)
+- Commit messages in a language other than English, or containing signatures, BUG descriptions, tests, logs, archives, or similar content
 - Write project-specific facts into `.AI/standards/`
 - Misjudge input format differences as new workflow needs
 - Use undefined enum values

@@ -3,7 +3,7 @@ title: Git Operations
 doc_type: skill
 status: active
 scope: ALDS
-updated: 2026-05-14
+updated: 2026-10-27
 summary: Safe, reviewable, production-quality Git operations for AI assistants.
 ---
 
@@ -262,7 +262,7 @@ Watch carefully for:
 7. COMMIT MESSAGE STANDARDS
 ==================================================
 
-Use English only.
+Use English only. All repositories use English-only commit messages, including Chinese-language repositories and their dual-language mirrors.
 
 Follow Conventional Commits format:
 
@@ -368,6 +368,14 @@ Avoid:
 - mixed-purpose history
 
 History should remain understandable to human reviewers.
+
+Periodic categorized merge (executed when the user requests a "merge"):
+
+- Apply only to local unpushed commits; never rewrite pushed history
+- Group and squash local commits by category (`feat`/`fix`/`docs`/`refactor`/`chore` etc.), one commit per category
+- Merged commit messages in English only, containing a summary of modifications in that category
+- Commit messages must not contain: signatures (`Co-authored-by`, `Generated-by`, etc.), BUG descriptions, tests, logs, archives, or similar content
+- Ledgers (e.g., `reports/micro_tasks.md`) record per task and do not correspond one-to-one with the merged commit history; no alignment required
 
 ==================================================
 11. SAFETY GUARANTEES

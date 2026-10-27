@@ -3,8 +3,8 @@ title: ALDS Controlled Enumerations
 doc_type: standard
 status: active
 scope: ALDS
-updated: 2026-10-19
-version: 1.2.2
+updated: 2026-10-27
+version: 1.2.3
 ---
 
 # Controlled Enumerations
@@ -251,7 +251,7 @@ stateDiagram-v2
 
 ## 15. Micro Task Verification Status
 
-Micro task ledger (`reports/micro_tasks.md`) status column uses following enumerations, per `.AI/start.md` §6.2 and `alds_standards.md` §21.1.
+Micro task ledger (`reports/micro_tasks.md`) status column uses following enumerations, per `.AI/start.md` §6.2 and `alds_standards.md` §21.1. Ledger rows and git commits are not one-to-one: the ledger records process facts per task, while periodic categorized merges (`alds_standards.md` §23.1) combine commits; commit history is not required to align with the ledger.
 
 | Recorded Value | Meaning |
 | :--- | :--- |

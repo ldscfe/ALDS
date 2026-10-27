@@ -3,7 +3,7 @@ title: ALDS Standard Task Flow
 doc_type: start
 status: active
 scope: ALDS
-updated: 2026-10-19
+updated: 2026-10-27
 ---
 
 # Standard Task Flow
@@ -26,11 +26,13 @@ If user goal is to initialize `.AI/project/` baseline, stop this flow, route to 
 
 ## 2. Flow Overview
 
-`Project Definition -> Intent Routing -> Minimum Context -> Task Path Judgment -> { Micro Task | Simple Task | Engineering Task } -> Execution -> Verification -> Archive -> Git Commit`
+`Project Definition -> Intent Routing -> Minimum Context -> Pre-development Summary and Approval -> Task Path Judgment -> { Micro Task | Simple Task | Engineering Task } -> Execution -> Minimal Verification (compile pass) -> Archive -> Git Commit`
 
-- **Micro Task**: `... -> Direct Execution (no work order) -> micro_tasks.md add line (unverified) -> Git Commit` (verification deferred to user test or centralized test, §9)
-- **Simple Task**: `... -> Single Work Order -> User Instruction Execution -> Default Test -> simple_tasks.md add line -> Archive Work Order`
-- **Engineering Task**: `... -> Task Brief -> Approval -> Work Order(s) -> Approval -> Execution -> Test Gate -> Archive + Pulse Sync`
+Any requirement or BUG must not be developed without pre-development summary and approval (see §3.1); after development, only necessary minimal verification and compile pass are executed by default (see §9).
+
+- **Micro Task**: `... -> Summary + Handling Proposal (BUG: cause explanation first) -> Explicit User Consent/Approval -> Direct Execution (no work order) -> Necessary minimal verification + compile pass -> micro_tasks.md add line (unverified) -> Git Commit (English)`
+- **Simple Task**: `... -> Single Work Order (itself the summary and proposal; BUG includes cause) -> User Instruction Execution -> Minimal verification + compile pass -> simple_tasks.md add line -> Archive Work Order`
+- **Engineering Task**: `... -> Task Brief -> Approval -> Work Order(s) -> Approval -> Execution -> Minimal verification + compile pass -> Archive + Pulse Sync`
 
 ### 2.1 Flow Main Diagram
 
@@ -41,10 +43,11 @@ flowchart TD
   B -- initialized --> C["Task Profile task_profile.md §3: 5 fields"]
   C --> D["Intent Routing §3 → Selected Workflow"]
   D --> E["Minimum Read Set: Required Table + Profile Evaluation + Negative List"]
-  E --> F{Task Path §6.1}
-  F -- "Micro Task §6.2" --> G0["Direct Execution (no work order) → micro_tasks.md add line (unverified) → Deferred Verification"]
-  F -- "Simple Task §6.3" --> G1["Single Work Order (Frontend includes Layout Diagram) → Execution → Default Test → simple_tasks.md add line"]
-  F -- "Engineering Task §6.4" --> G2["Task Brief → Work Order(s) → Execution → Test Gate → Archive+Pulse Sync"]
+  E --> H["Pre-development Summary and Approval §3.1: summary + proposal (BUG: cause first) -> explicit approved"]
+  H --> F{Task Path §6.1}
+  F -- "Micro Task §6.2" --> G0["Execution (no work order) → minimal verification + compile → micro_tasks.md add line (unverified)"]
+  F -- "Simple Task §6.3" --> G1["Single Work Order (Frontend includes Layout Diagram) → Execution → minimal verification + compile → simple_tasks.md add line"]
+  F -- "Engineering Task §6.4" --> G2["Task Brief → Work Order(s) → Execution → minimal verification + compile → Archive+Pulse Sync"]
   G0 --> K["git commit"]
   G1 --> K
   G2 --> K
@@ -69,6 +72,19 @@ If user instruction matches operational intent vocabulary (summary / next steps�
 | Architecture, specs, process, governance evolution | `.AI/workflows/architecture_evolution.md` | `.AI/process/review/architecture_review.md`, `.AI/process/review/spec_review.md` |
 | Existing processes cannot safely express task | `.AI/workflows/create_workflow.md` | `.AI/standards/workflow_engine.md` |
 | Cannot determine | `.AI/workflows/unified_task_flow.md` | Load final decision basis first, then route |
+
+### 3.1 Pre-development Summary and Approval Gate
+
+When the user raises a requirement or reports a BUG, **never write code directly**; present to the user first:
+
+1. **Cause explanation** (BUG tasks only): explain the problem cause first (root cause analysis)
+2. **Summary**: summary of the intended change
+3. **Handling proposal**: the recommended implementation approach
+
+While the user has questions, keep explaining cause/summary/proposal until the user explicitly consents/approves (mapped to `approved`, see `alds_standards.md` §19.1); only then may development start.
+
+- This gate applies to all three task tiers: micro tasks pass it before execution per §6.2; for simple tasks the work order and for engineering tasks the task brief themselves are the summary and handling proposal (BUG tasks must include the cause explanation), so their existing approval nodes inherently satisfy this gate without duplication
+- After development, only necessary minimal verification and compile pass are executed; centralized verification runs only on explicit user instruction (§9)
 
 ## 4. Final Decision Basis When Cannot Determine
 
@@ -133,16 +149,16 @@ All conditions below simultaneously satisfied = **Simple Task**, go §6.3; any n
 
 ### 6.2 Micro Task Path
 
-Micro tasks (one-sentence requirements) generate no task brief and no work order; user instruction itself is execution authorization:
+Micro tasks (one-sentence requirements) generate no task brief and no work order, but must pass the pre-development summary and approval gate (§3.1) before execution:
 
 1. Judge per §6.1; ambiguity blocking execution must be clarified conversationally first (not a formal approval node)
-2. Execute directly per the selected workflow and minimum context — the user's instruction is the authorization, no approval node; execution discipline is unchanged (no silent scope expansion; error handling per §11)
+2. Present summary and handling proposal first (BUG tasks: cause explanation first) and wait for explicit user consent/approval; while the user has questions keep explaining cause/summary/proposal; after explicit approval, execute directly per the selected workflow and minimum context — execution discipline is unchanged (no silent scope expansion; error handling per §11)
 3. If execution actually exceeds micro task boundary (multi-point change, risk > `low`, touches invariants/guards, new dependencies, net change > `50` lines or > `3` files), pause and upgrade: backfill single work order (simple task, §6.3) or task brief (engineering task, §6.4), ledger row status set `upgraded`
-4. After completion add line at first row below header in `reports/micro_tasks.md` (newest on top), status `unverified`; columns per `.AI/templates/micro_task_list_template.md`
-5. Verification not executed per task: deferred to user test or centralized test (both user-triggered, §9); closure updates status and evidence, no evidence = no `verified`
-6. Git commit per task (§10)
+4. After completion execute only necessary minimal verification and compile pass; centralized verification runs only on user instruction (see §9)
+5. Add line at first row below header in `reports/micro_tasks.md` (newest on top), status `unverified`; columns per `.AI/templates/micro_task_list_template.md`
+6. Git commit per task (commit message in English only, noting micro task and one-sentence requirement summary; see `skills/git.md` §7)
 
-Micro tasks not recorded in project pulse, no task brief or work order generated; only ledger record is `reports/micro_tasks.md` one line (session log §12 still records the instruction).
+Micro tasks not recorded in project pulse, no task brief or work order generated; only ledger record is `reports/micro_tasks.md` one line (session log §12 still records the instruction). Ledger rows and git commits are not one-to-one: periodic categorized merges combine commits (see `skills/git.md` §10 and `alds_standards.md` §23.1); the ledger records process facts only.
 
 ### 6.3 Simple Task Path
 
@@ -222,7 +238,7 @@ Work orders execute only after `approved`:
 
 ## 9. Verification and Test Gate
 
-After changes executed, **test is default action**:
+After changes executed, by default only **necessary minimal verification and compile pass** are executed (lowest-level checks: compiles/builds, change is runnable); full test suites and centralized verification run only on explicit user instruction — without instruction, verification scope must not be expanded:
 
 > **Micro Task Exception**: micro tasks (§6.2) do not execute per-task test; this stage's test gate is deferred (rules per `alds_standards.md` §21.1). Ledger rows stay `unverified` until closure evidence arrives; must not set `verified` without evidence.
 >
@@ -255,11 +271,13 @@ After verification results `approved` (micro tasks: ledger line + per-task git c
 7. If task brief sourced from analysis report (`source_analysis` field), check if all analysis report identified items implemented. If all implemented, update analysis report frontmatter `status` to `implemented`
 8. Load `skills/git.md`, execute per Git operations spec
 9. Check git diff, keep only task-related changes
-10. Write git commit, message describes task, key changes, verification results
+10. Write one git commit per task: commit messages in English only (all repositories, including Chinese-language and dual-language mirror repositories), describing task and key changes (see `skills/git.md` §7)
 
 **Simple Task Archive**: Simple tasks no task brief, no project pulse, only ledger is add line at first row below header in `reports/simple_tasks.md` (newest on top), columns: date/summary/type/risk/net change/verification evidence/work order path; work order archived per step 2 to `reports/completed/plan/`.
 
 **Micro Task Archive**: Micro tasks no task brief, no work order, no archive artifacts, no project pulse; only ledger is add line at first row below header in `reports/micro_tasks.md` (newest on top, status `unverified`); git commit per task. Verification closure (status and evidence backfill) happens when user test results or centralized test results arrive (§9); backfill updates only the ledger row — no retroactive work order.
+
+**Periodic Categorized Merge**: when the user requests a merge, combine local unpushed commits by category per `skills/git.md` §10 and `alds_standards.md` §23.1; ledger records and the merged commit history are not required to correspond one-to-one.
 
 ## 11. Error Handling
 
